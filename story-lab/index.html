@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دارو — داستان کوتاه ساخته‌شده با هوش مصنوعی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --amber:#c8862f;
+    --amber-soft:#e0a94e;
+    --green:#1f3b30;
+    --green-2:#2c5142;
+    --ink:#14100c;
+    --paper:#f6efe3;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 700px at 80% -10%, #2c5142 0%, transparent 60%),
+      radial-gradient(900px 600px at 0% 100%, #3a2a12 0%, transparent 55%),
+      #100d09;
+    color:#efe6d6;
+    font-family:'Vazirmatn', Tahoma, 'Segoe UI', sans-serif;
+    line-height:2.05;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:64px 24px 96px}
+
+  /* ---------- header ---------- */
+  header{text-align:center;margin-bottom:72px}
+  .kicker{
+    display:inline-block;font-size:.72rem;letter-spacing:.22em;
+    color:var(--amber-soft);border:1px solid rgba(200,134,47,.4);
+    border-radius:999px;padding:7px 16px;margin-bottom:26px;
+    font-weight:500;
+  }
+  h1{
+    font-size:clamp(3rem,11vw,5.4rem);
+    font-weight:700;margin:0;line-height:1.05;
+    letter-spacing:-.01em;
+    background:linear-gradient(180deg,#f7e6c4,#c8862f 85%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:#a99b86;font-size:1.02rem;margin-top:18px}
+  .rule{
+    width:64px;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent);
+    margin:30px auto;
+  }
+  .meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;font-size:.78rem;color:#8d8272}
+  .meta span{border:1px solid rgba(255,255,255,.09);border-radius:999px;padding:5px 13px}
+
+  /* ---------- scene ---------- */
+  scene, .scene{display:block;margin-bottom:86px}
+  .num{
+    font-size:.7rem;letter-spacing:.18em;color:var(--amber);
+    font-weight:500;margin-bottom:8px;
+  }
+  h2{
+    font-size:clamp(1.45rem,4.4vw,2.05rem);
+    font-weight:500;margin:0 0 26px;color:#f3e8d5;line-height:1.5;
+  }
+  figure{margin:0 0 30px;position:relative;border-radius:14px;overflow:hidden;
+    box-shadow:0 26px 60px -28px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.06) inset;}
+  figure img{display:block;width:100%;height:auto}
+  figcaption{
+    position:absolute;inset-inline-start:0;bottom:0;width:100%;
+    padding:44px 20px 14px;font-size:.74rem;color:#d9cdb8;
+    background:linear-gradient(transparent,rgba(6,5,3,.9));
+    letter-spacing:.04em;
+  }
+  p{margin:0 0 22px;font-size:1.075rem;color:#e6dccb}
+  .beats p:first-child::first-letter{
+    font-size:3.2em;font-weight:700;color:var(--amber);
+    float:right;line-height:.82;margin:0 .18em 0 0;padding-top:.06em;
+  }
+  .dlg{margin-inline-start:0;padding-inline-start:20px;border-inline-start:2px solid rgba(200,134,47,.55);
+       color:#f3e8d5}
+  .pull{
+    margin:38px 0;padding:22px 26px;text-align:center;
+    background:linear-gradient(180deg,rgba(44,81,66,.34),rgba(44,81,66,.1));
+    border:1px solid rgba(200,134,47,.22);border-radius:12px;
+    font-size:1.18rem;font-weight:500;color:#f6e9cf;
+  }
+
+  /* ---------- audio ---------- */
+  .narration{display:flex;align-items:center;gap:14px;margin:0 0 32px;
+    background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);
+    border-radius:12px;padding:12px 16px}
+  .narration .lbl{font-size:.76rem;color:#a99b86;white-space:nowrap}
+  audio{width:100%;height:36px;filter:invert(.92) hue-rotate(180deg) saturate(.6)}
+  audio::-webkit-media-controls-panel{background-color:#e8dcc6}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid rgba(255,255,255,.09);padding-top:44px;margin-top:20px}
+  footer h3{font-size:1rem;font-weight:500;color:var(--amber-soft);margin:0 0 18px;letter-spacing:.03em}
+  footer ul{margin:0 0 20px;padding-inline-start:22px;color:#c8bca8;font-size:.94rem;line-height:2.1}
+  footer li{margin-bottom:6px}
+  .tag{color:#8d8272;font-size:.8rem;line-height:2}
+  code{background:rgba(255,255,255,.07);border-radius:5px;padding:2px 6px;font-size:.85em;
+       font-family:ui-monospace,Menlo,monospace;direction:ltr;display:inline-block}
+  .end{text-align:center;color:#8d8272;font-size:.85rem;margin-top:60px;line-height:2.2}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">ساخته‌شده با هوش مصنوعی — آزمایش عملی</div>
+  <h1>دارو</h1>
+  <div class="sub">داستان کوتاه در پنج صحنه</div>
+  <div class="rule"></div>
+  <div class="meta">
+    <span>۵ صحنه</span><span>حدود ۸۰۰ کلمه</span><span>متن + تصویر + صدا</span><span>فارسی</span>
+  </div>
+</header>
+
+<!-- ۱ -->
+<section class="scene">
+  <div class="num">صحنه‌ی ۱</div>
+  <h2>جمعه، هفت و ده دقیقه</h2>
+  <figure>
+    <img src="assets/scene-1.jpg" alt="داروخانه، غروب؛ پسر پشت درِ شیشه‌ای">
+    <figcaption>تصویر ۱ — پسر، سکه‌ها، و درِ شیشه‌ای. (تصویر ساخته‌شده با هوش مصنوعی)</figcaption>
+  </figure>
+  <div class="narration">
+    <span class="lbl">روایت صوتی</span>
+    <audio controls preload="none" src="assets/scene-1.mp3"></audio>
+  </div>
+  <div class="beats">
+    <p>پدرم می‌گفت داروخانه سه بو دارد: الکل، نعنا، و ترسِ کسی که پشت درِ شیشه‌ای ایستاده است. سه ماه بعد از مرگش، من هنوز فقط دوتای اول را حس می‌کردم.</p>
+    <p>آن جمعه داشتم کشوی نسخه‌های باطله را خالی می‌کردم که در باز شد و پسری آمد تو. ده سالش بود، شاید کمتر. کاپشن سرمه‌ایِ گشاد، کفش‌هایی که یک اندازه بزرگ‌تر از پایش بود. سکه‌ها را روی پیشخوان گذاشت و دو بار شمرد.</p>
+    <p class="dlg">— شربت گل‌گاوزبان. همون که آقای داروساز خودش می‌ساخت.</p>
+    <p>در این شهر، همه پدرم را «آقای داروساز» صدا می‌زدند، انگار این دو کلمه را روی نسخه‌ها نوشته بودند و اسم کوچکش دیگر لازم نبود.</p>
+    <p>گفتم کسی دیگر آن شربت را نمی‌سازد. گفت: «پس کِی می‌سازید؟» گفتم نمی‌دانم. گفت: «من جمعه‌ی دیگر می‌آیم.» و رفت. سکه‌ها را برداشت، ولی نه همه‌شان؛ یکی روی پیشخوان ماند، همان‌جایی که شمرده بود.</p>
+  </div>
+</section>
+
+<!-- ۲ -->
+<section class="scene">
+  <div class="num">صحنه‌ی ۲</div>
+  <h2>دستورِ پدر</h2>
+  <figure>
+    <img src="assets/scene-2.jpg" alt="ریختن شربت کهربایی در بطری">
+    <figcaption>تصویر ۲ — بیست گرم گل خشک، آبِ جوشیده، یک قاشق عسل.</figcaption>
+  </figure>
+  <div class="narration">
+    <span class="lbl">روایت صوتی</span>
+    <audio controls preload="none" src="assets/scene-2.mp3"></audio>
+  </div>
+  <div class="beats">
+    <p>دفتر پدرم لای جعبه‌های پلاستیکی مانده بود؛ جلد چرمی، لبه‌اش سوخته از سیگاری که یادم نمی‌آید کِی خاموشش کرد. آخرِ دفتر، با خودکار آبی: «شربت گل‌گاوزبان: بیست گرم گل خشک. آبِ جوشیده که کمی خنک شده باشد. یک قاشق عسل. همش نزن؛ بگذار گل خودش باز شود.» زیرش، با خودکار قرمز، سه بار خط کشیده بود و نوشته بود: «برای یاسین ـ بی‌حساب.»</p>
+    <p>جمعه‌ی بعد شربت آماده بود؛ کهربایی، ته بطری یک رسوب نرم. یاسین پول‌ها را گذاشت، شمرد، و پرسید: «می‌شه همین‌جا بخورم؟»</p>
+    <p>لیوان را دادم. تا آخر خورد. ته لیوان یک جرعه ماند. گفتم نمی‌خوری؟ گفت: «آقای داروساز می‌گفت این جرعه مال مادرمه.» بعد، مثل کسی که از فراموش شدن می‌ترسد، اضافه کرد: «همون که شب‌ها نمی‌خوابه.»</p>
+  </div>
+</section>
+
+<!-- ۳ -->
+<section class="scene">
+  <div class="num">صحنه‌ی ۳</div>
+  <h2>جمعه‌ها</h2>
+  <figure>
+    <img src="assets/scene-3.jpg" alt="دفتر چرمی باز، بطری کهربایی، برگه‌ی تاشده">
+    <figcaption>تصویر ۳ — دفتر، خطِ قرمزِ سه‌بار خط‌خورده، و برگه‌ای که یازده سال جا مانده.</figcaption>
+  </figure>
+  <div class="narration">
+    <span class="lbl">روایت صوتی</span>
+    <audio controls preload="none" src="assets/scene-3.mp3"></audio>
+  </div>
+  <div class="beats">
+    <p>جمعه‌ها شدند عادت. او می‌آمد، پول‌ها را می‌گذاشت، من شربت را می‌ریختم، یک جرعه ته لیوان می‌ماند و او می‌رفت.</p>
+    <p>یک بار پرسیدم دکتر رفته‌اند؟ گفت رفته‌اند. گفتم پس چرا بهتر نمی‌شود؟ شانه بالا انداخت: «دکتر برای مادرِ آدم دارو می‌نویسد. برای مادرِ من نسخه ننوشت.» منظورش را نفهمیدم و نپرسیدم، چون بعضی سؤال‌ها را آدم از بچه‌ی ده‌ساله نمی‌پرسد.</p>
+    <p>بعد از آن، درباره‌ی پدرم می‌پرسید. این‌که از کِی داروساز شد، صبح‌ها چه چیزی گوش می‌داد، کدام قفسه را بیشتر دوست داشت. بعضی جواب‌ها را نمی‌دانستم و راحت می‌گفتم نمی‌دانم؛ و او همان‌قدر راحت سؤال بعدی را می‌پرسید. مثل کسی که از جواب، پرسیدن را لازم‌تر دارد.</p>
+  </div>
+</section>
+
+<!-- ۴ -->
+<section class="scene">
+  <div class="num">صحنه‌ی ۴</div>
+  <h2>نانوا</h2>
+  <figure>
+    <img src="assets/scene-4.jpg" alt="پسر روی چهارپایه با لیوان شربت">
+    <figcaption>تصویر ۴ — یک جرعه در ته لیوان، و سی ثانیه‌ای که کش آمد.</figcaption>
+  </figure>
+  <div class="narration">
+    <span class="lbl">روایت صوتی</span>
+    <audio controls preload="none" src="assets/scene-4.mp3"></audio>
+  </div>
+  <div class="beats">
+    <p>مرداد بود. رفتم نانواییِ سرِ کوچه، چون پدرم می‌گفت بوی نانِ همسایه، بوی دارو را کم می‌کند. نانوا، که همیشه دستش بوی خمیر و کنجد داشت، یاسین را دید از جلوی در رد می‌شود و گفت: «باز جمعه‌ست.»</p>
+    <p>گفتم بچه‌ی کیست؟ گفت: «یاسین نوروزی. مادرش سه ماه بعد از به دنیا آمدنش رفت.» پدرش راننده‌ی جاده‌ی قدیم بود، تا دیروقت نمی‌آمد. یک تکه نان روی لبه‌ی حوض گذاشت برای گنجشک‌ها و گفت: «پیرمرد داروساز هم جمعه‌ها داداشِ کوچیک‌ترش بود.»</p>
+    <p>آن جمعه، شربت را که ریختم، گفتم: «من نمی‌تونم برای مادرت داستان بگم. نمی‌شناسمش.»</p>
+    <p>لیوان را گذاشت. تا سی شمردم؛ سی ثانیه کش آمد. بعد گفت: «می‌دونم.»</p>
+    <p>و بعد همه‌اش را گفت، یک‌جا، بی‌توقف، مثل کسی که سنگ‌ریزه از جیبش خالی می‌کند. سه سال پیش، شب‌ها نمی‌خوابید. پدرش او را آورده بود داروخانه، چون هیچ‌جای شهر تا دیروقت باز نبود. پدرم شربت را ساخته بود و پرسیده بود شربت برای کیست؟ یاسین گفته بود برای مادرم. پدرم گفته بود: «پس هر جمعه بیا. شربت مالِ مادرته؛ تو بخور، من از مادرت برایت می‌گویم.»</p>
+    <p>گفتم آن جرعه‌ای که ته لیوان می‌ماند؟ گفت: «اون برای اینه که یک چیزی ازش بمونه.»</p>
+  </div>
+</section>
+
+<!-- ۵ -->
+<section class="scene">
+  <div class="num">صحنه‌ی ۵</div>
+  <h2>هر جمعه</h2>
+  <figure>
+    <img src="assets/scene-5.jpg" alt="نیلوفر در داروخانه‌ی تاریک، برچسب تازه روی بطری">
+    <figcaption>تصویر ۵ — شب، داروخانه‌ی بسته، و برچسبی که تاریخِ انقضا ندارد.</figcaption>
+  </figure>
+  <div class="narration">
+    <span class="lbl">روایت صوتی</span>
+    <audio controls preload="none" src="assets/scene-5.mp3"></audio>
+  </div>
+  <div class="beats">
+    <p>برگه لای صفحه‌ی حساب‌های سالِ هفتمِ داروخانه بود؛ یک بار تا شده بود و بعد، یازده سال، فراموش. خطش خط پدرم نبود: «آقای داروساز، من از این شهر می‌روم. نمی‌دانم چه می‌شود. اگر پسر شد و از من پرسید، بگویید مادرش آدمِ خواب‌آلودی بود که چایش را با گلِ گاوزبان می‌خورد و به آن می‌گفت شربتِ خواب. بقیه‌اش را نمی‌دانم. بقیه‌اش را شما بگویید.»</p>
+    <p>آن شب، بطری را برداشتم و برچسبش را عوض کردم. جای تاریخِ انقضا نوشتم: «هر جمعه.» درِ داروخانه را که بستم، آسمان مثل همیشه‌ی آن شهر، بی‌ستاره و صاف بود.</p>
+    <p class="pull">دارو در قفسه‌ها نبود. دارو، همان جمله‌ی بعدی بود که باید می‌گفتم.</p>
+  </div>
+</section>
+
+<footer>
+  <h3>این صفحه چطور ساخته شد؟</h3>
+  <ul>
+    <li><b>۱. طرح و انجیل داستان:</b> کاراکترها، ابژه‌های مرکزی (بطری کهربایی، دفتر چرمی، یک جرعه)، قاعده‌ی جهان داستان و فهرست «ممنوعیت‌ها» — قبل از نوشتن یک کلمه.</li>
+    <li><b>۲. ساختار:</b> پنج صحنه با «قلابِ پایانیِ» هر صحنه، و کاشتِ فورشافادو در صحنه‌ی ۲ برای برداشت در صحنه‌ی ۵.</li>
+    <li><b>۳. متن:</b> نوشتن با مدل زبانی، با قید صریح: بدون پایانِ موعظه‌ای، بدون صفت‌های سه‌تاییِ ردیفی، بدون جمع‌بندیِ «پس فهمیدم که…».</li>
+    <li><b>۴. تصویر:</b> صحنه‌ی ۱ اول ساخته شد؛ سپس همان تصویر به‌عنوان <i>مرجعِ کاراکتر و سبک</i> به چهار صحنه‌ی دیگر داده شد تا نیلوفر و یاسین یک آدم بمانند.</li>
+    <li><b>۵. صدا:</b> هر صحنه یک قطعه‌ی روایت مستقل دارد.</li>
+  </ul>
+  <h3>آنچه این آزمایش <i>ثابت نمی‌کند</i></h3>
+  <ul>
+    <li>این‌که ماشین «تجربه» می‌کند یا داستان‌گویی را مثل یک نویسنده‌ی انسانی می‌فهمد.</li>
+    <li>این‌که یک رمان ۸۰ هزار کلمه‌ای بدون ویرایش انسانی، انسجامش را نگه می‌دارد. نگه نمی‌دارد.</li>
+    <li>این‌که متن همه‌جا بی‌نقص است. انتخابِ نهاییِ کلمه، تشخیصِ کلیشه، و تصمیم به <i>حذف</i>، کار ویرایشگرِ انسانی است.</li>
+  </ul>
+  <p class="tag">
+    فایل‌های خام: <code>story-lab/story.md</code> (متن کامل + انجیل داستان + پرامپت‌ها) ·
+    <code>story-lab/assets/</code> (پنج تصویر) · <code>story-lab/REPORT.md</code> (گزارش توانمندی و مرزها)
+  </p>
+</footer>
+
+<div class="end">
+  پایان.<br>
+  تصاویر این صفحه با هوش مصنوعی ساخته شده‌اند؛ متن با ویرایش انسانی.
+</div>
+
+</div>
+</body>
+</html>
