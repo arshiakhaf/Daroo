@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""ساختِ PDF داستانِ «آمپولِ نهم» از فایل‌های story/part*.md
+"""ساختِ PDF داستانِ «هلالِ سفید» از فایل‌های story/part*.md
 
 اجرا:
     python3 make_pdf.py            # همهٔ ۱۶ بخش
@@ -17,7 +17,7 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 STORY_DIR = os.path.join(BASE, "story")
 FONT_DIR = os.path.join(BASE, "assets", "fonts")
 ASSET_DIR = os.path.join(BASE, "assets")
-OUT_NAME = sys.argv[2] if len(sys.argv) > 2 else "آمپول-نهم.pdf"
+OUT_NAME = sys.argv[2] if len(sys.argv) > 2 else "هلال-سفید.pdf"
 OUT_PATH = os.path.join(BASE, OUT_NAME)
 
 INK = (18, 22, 20)
@@ -50,7 +50,7 @@ class Book(FPDF):
         self.set_fallback_fonts(["DejaVu"])
         self.set_text_shaping(True, direction="rtl", script="arab", language="fas")
         self.running = ""
-        self.set_title("آمپولِ نهم — داستانِ آموزشی داروشناسی")
+        self.set_title("هلالِ سفید — رمانِ آموزشی داروشناسی (قلب‌وعروق و مامایی)")
         self.set_author("بر پایهٔ جزوه‌های دکتر فروتن")
 
     def header(self):
@@ -275,8 +275,20 @@ def read_blocks(path):
     return blocks
 
 
+def _discover_parts():
+    nums = []
+    for f in os.listdir(STORY_DIR):
+        m = re.match(r"part(\d+)\.md$", f)
+        if m:
+            nums.append(int(m.group(1)))
+    return sorted(nums)
+
+
 def main():
-    limit = int(sys.argv[1]) if len(sys.argv) > 1 else 16
+    parts = _discover_parts()
+    limit = int(sys.argv[1]) if len(sys.argv) > 1 else len(parts)
+    limit = min(limit, len(parts)) if limit > 0 else len(parts)
+    part_numbers = parts[:limit]
     pdf = Book()
 
     # صفحهٔ عنوان
@@ -293,7 +305,7 @@ def main():
     pdf.set_font("Vazir", "B", 30)
     pdf.set_text_color(*ACCENT)
     pdf.set_x(pdf.l_margin)
-    pdf.multi_cell(pdf.epw, 14, "آمپولِ نهم", align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.multi_cell(pdf.epw, 14, "هلالِ سفید", align="C", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Vazir", "", 12.5)
     pdf.set_text_color(*AMBER)
     pdf.set_x(pdf.l_margin)
@@ -304,7 +316,7 @@ def main():
     pdf.set_text_color(*DIM)
     pdf.set_x(pdf.l_margin)
     pdf.multi_cell(pdf.epw, 6.5,
-                   "شانزده صحنه در یک شبِ شیفت · هر شماره یا جمله‌ای که به دارو مربوط است، عیناً از متنِ "
+                   "دوازده فصل در هفت بندر · هر عدد یا نام یا عارضه‌ای که به دارو مربوط است، عیناً از متنِ "
                    "دو جزوه گرفته شده است. ضمیمهٔ پایانی، رونوشتِ صفحه‌به‌صفحهٔ هر دو جزوه است تا بشود "
                    "هربار مقابله کرد.",
                    align="C", new_x="LMARGIN", new_y="NEXT")
@@ -313,7 +325,7 @@ def main():
     pdf.add_page()
     pdf.running = "فهرست"
     pdf.subhead("فهرست")
-    for n in range(1, limit + 1):
+    for n in part_numbers:
         p = os.path.join(STORY_DIR, f"part{n}.md")
         blocks = read_blocks(p)
         ch = next((b[1] for b in blocks if b[0] == "chapter"), None)
@@ -326,7 +338,7 @@ def main():
         pdf.multi_cell(pdf.epw, 7, ch, align="R", markdown=True,
                        new_x="LMARGIN", new_y="NEXT")
 
-    for n in range(1, limit + 1):
+    for n in part_numbers:
         path = os.path.join(STORY_DIR, f"part{n}.md")
         blocks = read_blocks(path)
         started = False
