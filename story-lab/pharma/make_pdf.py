@@ -77,11 +77,11 @@ class Book(FPDF):
         self.set_text_color(*INK)
 
     # ---------- building blocks ----------
-    def para(self, text, size=BODY_SIZE, lh=BODY_LH, align="J", color=INK, style="",
+    def para(self, text, size=BODY_SIZE, lh=BODY_LH, align="R", color=INK, style="",
              indent=0):
         self.set_font("Vazir", style, size)
         self.set_text_color(*color)
-        self.set_x(self.l_margin + indent)
+        self.set_x(self.l_margin)
         self.multi_cell(self.epw - indent, lh, text, align=align, markdown=True,
                         new_x="LMARGIN", new_y="NEXT")
         self.ln(lh * 0.35)
@@ -114,15 +114,15 @@ class Book(FPDF):
     def quote(self, text):
         self.set_font("Vazir", "", BODY_SIZE - 0.5)
         self.set_text_color(70, 66, 58)
-        x = self.l_margin + 6
-        w = self.epw - 6
+        w = self.epw - 9
+        x_bar = self.l_margin + w + 3          # میله در لبهٔ راستِ بلوک
         y = self.get_y()
-        self.set_x(x)
+        self.set_x(self.l_margin)
         self.multi_cell(w, BODY_LH - 0.4, text, align="R", markdown=True,
-                        new_x="LMARGIN", new_y="NEXT", padding=(0, 2, 0, 4))
+                        new_x="LMARGIN", new_y="NEXT", padding=(0, 4, 0, 2))
         self.set_draw_color(*AMBER)
         self.set_line_width(0.5)
-        self.line(self.l_margin + 2, y, self.l_margin + 2, self.get_y() - 2)
+        self.line(x_bar, y, x_bar, self.get_y() - 2)
         self.set_line_width(0.2)
         self.set_text_color(*INK)
         self.ln(1)
@@ -133,6 +133,32 @@ class Book(FPDF):
         y = self.get_y()
         self.line(self.l_margin + self.epw * 0.3, y, self.l_margin + self.epw * 0.7, y)
         self.ln(3)
+
+    def h3(self, text):
+        self.ln(1)
+        self.set_font("Vazir", "B", 11.5)
+        self.set_text_color(*ACCENT)
+        self.set_x(self.l_margin)
+        self.multi_cell(self.epw, 6.5, text, align="R", markdown=True,
+                        new_x="LMARGIN", new_y="NEXT")
+        self.set_text_color(*INK)
+        self.ln(1.5)
+
+    def body_bold(self, text):
+        self.set_font("Vazir", "B", BODY_SIZE)
+        self.set_text_color(*INK)
+        self.set_x(self.l_margin)
+        self.multi_cell(self.epw, BODY_LH, text, align="R",
+                        new_x="LMARGIN", new_y="NEXT")
+        self.ln(BODY_LH * 0.4)
+
+    def bullet(self, text):
+        self.set_font("Vazir", "", BODY_SIZE)
+        self.set_text_color(*INK)
+        self.set_x(self.l_margin)
+        self.multi_cell(self.epw - 4, BODY_LH, "\u2022 " + text, align="R", markdown=True,
+                        new_x="LMARGIN", new_y="NEXT", padding=(0, 0, 0, 3))
+        self.ln(BODY_LH * 0.25)
 
     def render_table(self, rows):
         if not rows:
@@ -216,12 +242,21 @@ def read_blocks(path):
                 i += 1
             blocks.append(("quote", " ".join(buf)))
             continue
-        if re.match(r"^\*\*[^*]+\*\*$", s):
-            blocks.append(("subhead", s.strip("*").strip()))
+        if s.startswith("### "):
+            blocks.append(("h3", s.lstrip("#").strip()))
             i += 1
             continue
-        if re.match(r"^(\d+[.)]|[\u06F0-\u06F9]+[.)]|\u0660-\u0669)+\s", s):
+        if re.match(r"^\*\*[^*]+\*\*$", s):
+            body = s.strip("*").strip()
+            blocks.append(("subhead" if len(body) <= 120 else "boldline", body))
+            i += 1
+            continue
+        if re.match(r"^(\d+[.)]|[\u06F0-\u06F9]+[.)]|[\u0660-\u0669]+[.)])\s", s):
             blocks.append(("lead", s))
+            i += 1
+            continue
+        if s.startswith("- "):
+            blocks.append(("bullet", s[2:].strip()))
             i += 1
             continue
         buf = [s]
@@ -229,7 +264,9 @@ def read_blocks(path):
         while i < len(lines):
             nxt = lines[i].strip()
             if (not nxt or nxt.startswith("|") or nxt.startswith("> ")
-                    or nxt.startswith("## ") or nxt == "[[DEBRIEF]]"
+                    or nxt.startswith("## ") or nxt.startswith("### ")
+                    or nxt == "[[DEBRIEF]]"
+                    or re.match(r"^\*\*[^*]+\*\*$", nxt)
                     or (set(nxt) <= set("*") and len(nxt) >= 3)):
                 break
             buf.append(nxt)
@@ -301,6 +338,10 @@ def main():
                 started = True
             elif kind == "subhead":
                 pdf.subhead(payload)
+            elif kind == "h3":
+                pdf.h3(payload)
+            elif kind == "boldline":
+                pdf.body_bold(payload)
             elif kind == "para":
                 if not started:
                     pdf.chapter(f"بخشِ {n}")
@@ -324,7 +365,12 @@ def main():
                 if not started:
                     pdf.chapter(f"بخشِ {n}")
                     started = True
-                pdf.para(payload, indent=6, align="R")
+                pdf.para(payload, indent=5, align="R")
+            elif kind == "bullet":
+                if not started:
+                    pdf.chapter(f"بخشِ {n}")
+                    started = True
+                pdf.bullet(payload)
             elif kind == "hr":
                 pdf.hr()
 
