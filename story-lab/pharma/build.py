@@ -4,7 +4,7 @@
 import io, os, re, html
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-PARTS = [os.path.join(BASE, "story", "part%d.md" % i) for i in range(1, 12)]
+PARTS = [os.path.join(BASE, "story", "part%d.md" % i) for i in range(1, 17)]
 
 
 def esc(t):
