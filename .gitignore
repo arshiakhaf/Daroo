@@ -1,0 +1,6 @@
+node_modules/
+__pycache__/
+*.pyc
+package.json
+package-lock.json
+test_script_structure.py
