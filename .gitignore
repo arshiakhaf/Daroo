@@ -1,6 +1,6 @@
-node_modules/
-__pycache__/
+py_modules/
 *.pyc
-package.json
-package-lock.json
-test_script_structure.py
+__pycache__/
+test_page_calc.py
+test_bench.pdf
+/tmp/epic_pass1.pdf

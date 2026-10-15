@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, "/home/user/Daroo/py_modules")
 # -*- coding: utf-8 -*-
 import os
 import sys
@@ -16,6 +18,8 @@ from chapters.vol1_part2 import CHAPTER_4_EPIC, CHAPTER_5_EPIC, CHAPTER_6_EPIC, 
 from chapters.vol2_part1 import CHAPTER_8_EPIC, CHAPTER_9_EPIC, CHAPTER_10_EPIC, CHAPTER_11_EPIC
 from chapters.vol2_part2 import CHAPTER_12_EPIC, CHAPTER_13_EPIC, CHAPTER_14_EPIC, CHAPTER_15_EPIC, CHAPTER_16_EPIC
 from chapters.pharmacopeia_codex import PHARMACOPEIA_CODEX
+from chapters.clinical_cases import CLINICAL_CASES
+from chapters.biochemical_mechanisms import BIOCHEMICAL_MECHANISMS
 
 FONT_REGULAR = 'VazirFull'
 FONT_BOLD = 'VazirFull-Bold'
@@ -280,83 +284,183 @@ class EpicNovelPDFBuilder:
             
         self.current_y -= 8
 
-    def add_pharmacopeia(self, sections):
-        self.current_chapter_title = "دانشنامه فارماکوپیا"
+    def add_biochemical_mechanism(self, mech):
+        if not mech:
+            return
+            
+        c = self.c
+        if self.current_y < BOTTOM_MARGIN + 120:
+            self.start_new_page()
+            
+        # Header banner for mechanism
+        c.setFillColor(colors.HexColor('#4a235a'))
+        c.roundRect(LEFT_MARGIN, self.current_y - 30, PRINTABLE_WIDTH, 30, 4, fill=1, stroke=0)
+        
+        c.setFont(FONT_BOLD, 10)
+        c.setFillColor(colors.HexColor('#ffffff'))
+        c.drawRightString(RIGHT_MARGIN - 10, self.current_y - 19, fa(f"تحلیل بیوشیمیایی و سلولی: {mech['title']}"))
+        
+        self.current_y -= 44
+        
+        paragraphs = mech['content'].split('\n\n')
+        for p in paragraphs:
+            lines = wrap_text(p, FONT_REGULAR, 8.5, PRINTABLE_WIDTH)
+            for line in lines:
+                if self.current_y < BOTTOM_MARGIN + 35:
+                    self.start_new_page()
+                c.setFont(FONT_REGULAR, 8.5)
+                c.setFillColor(colors.HexColor('#1f1f1f'))
+                c.drawRightString(RIGHT_MARGIN, self.current_y, fa(line))
+                self.current_y -= 14.5
+            self.current_y -= 6
+        self.current_y -= 8
+
+    def add_clinical_case(self, case):
+        if not case:
+            return
+            
+        c = self.c
         self.start_new_page()
-        self.record_page_map["دانشنامه جامع فارماکوپیای ویرانشهر"] = self.page_num
+        
+        # Clinical Case Header Banner
+        c.setFillColor(colors.HexColor('#2c3e50'))
+        c.roundRect(LEFT_MARGIN, self.current_y - 55, PRINTABLE_WIDTH, 55, 6, fill=1, stroke=0)
+        
+        c.setFont(FONT_BOLD, 12.5)
+        c.setFillColor(colors.HexColor('#ffffff'))
+        c.drawRightString(RIGHT_MARGIN - 15, self.current_y - 22, fa(case['title']))
+        
+        c.setFont(FONT_REGULAR, 9)
+        c.setFillColor(colors.HexColor('#d4af37'))
+        c.drawRightString(RIGHT_MARGIN - 15, self.current_y - 42, fa("تحلیل موردی بالینی، تدابیر دارویی اورژانس و فرآیند پرستاری / مامایی"))
+        
+        self.current_y -= 75
+        
+        sections_data = [
+            ("شرح حال و تریاژ بیمار:", case.get('patient_profile'), '#1f1f1f', '#2980b9'),
+            ("علائم حیاتی در بدو ورود:", case.get('vitals'), '#8e44ad', '#8e44ad'),
+            ("یافته‌های پاراکلینیک و تشخیصی:", case.get('diagnostics'), '#16a085', '#16a085'),
+            ("تحلیل پاتوفیزیولوژی و فارماکودینامیک:", case.get('pathophysiology'), '#2c3e50', '#2c3e50'),
+            ("تشخیص‌های پرستاری (NANDA):", case.get('nursing_diagnoses'), '#c0392b', '#c0392b'),
+            ("دستورات دارویی و محاسبات دوز:", case.get('orders_and_dosing'), '#27ae60', '#27ae60'),
+            ("پایش، مراقبت و مانیتورینگ بالینی:", case.get('monitoring'), '#d35400', '#d35400')
+        ]
+        
+        for label, text, text_col, border_col in sections_data:
+            if not text:
+                continue
+                
+            if self.current_y < BOTTOM_MARGIN + 65:
+                self.start_new_page()
+                
+            # Mini section header
+            c.setFont(FONT_BOLD, 9.5)
+            c.setFillColor(colors.HexColor(border_col))
+            c.drawRightString(RIGHT_MARGIN, self.current_y, fa(f"■ {label}"))
+            self.current_y -= 16
+            
+            # Text body
+            raw_lines = text.split('\n')
+            for r_line in raw_lines:
+                lines = wrap_text(r_line, FONT_REGULAR, 8.5, PRINTABLE_WIDTH - 12)
+                for line in lines:
+                    if self.current_y < BOTTOM_MARGIN + 35:
+                        self.start_new_page()
+                    c.setFont(FONT_REGULAR, 8.5)
+                    c.setFillColor(colors.HexColor(text_col))
+                    c.drawRightString(RIGHT_MARGIN - 8, self.current_y, fa(line))
+                    self.current_y -= 14.5
+                self.current_y -= 2
+            self.current_y -= 8
+
+    def add_pharmacopeia(self, sections):
+        self.current_chapter_title = "دانشنامه جامع فارماکوپیای ویرانشهر"
+        self.start_new_page()
+        self.record_page_map[self.current_chapter_title] = self.page_num
+        
         c = self.c
         
-        c.setFont(FONT_BOLD, 16)
-        c.setFillColor(colors.HexColor('#8b1e22'))
-        c.drawRightString(RIGHT_MARGIN, self.current_y, fa("دانشنامه جامع فارماکوپیای بالینی ویرانشهر"))
-        self.current_y -= 25
+        # Banner for Pharmacopeia
+        c.setFillColor(colors.HexColor('#1b3b5a'))
+        c.roundRect(LEFT_MARGIN, self.current_y - 65, PRINTABLE_WIDTH, 65, 6, fill=1, stroke=0)
         
-        c.setFont(FONT_REGULAR, 10)
-        c.setFillColor(colors.HexColor('#444444'))
-        intro = "این مرجع کامل، تمامی داروهای مطرح‌شده در دو جزوه تخصصی بیماری‌های قلبی-عروقی و مامایی را با طبقه‌بندی، مکانیسم سلولی، کاربردها، علائم مسمومیت و پادزهرها خلاصه می‌کند:"
-        lines = wrap_text(intro, FONT_REGULAR, 10, PRINTABLE_WIDTH)
+        c.setFont(FONT_BOLD, 15)
+        c.setFillColor(colors.HexColor('#ffffff'))
+        c.drawRightString(RIGHT_MARGIN - 15, self.current_y - 25, fa("دانشنامه جامع فارماکوپیای ویرانشهر"))
+        
+        c.setFont(FONT_REGULAR, 9.5)
+        c.setFillColor(colors.HexColor('#d4af37'))
+        c.drawRightString(RIGHT_MARGIN - 15, self.current_y - 48, fa("مرجع بالینی تخصصی کلیه داروهای جزوات فارماکولوژی قلب و مامایی"))
+        
+        self.current_y -= 85
+        
+        intro_desc = (
+            "این دانشنامه بر اساس سرفصل‌های جامع فارماکولوژی مامایی و داروشناسی بیماری‌های قلبی-عروقی "
+            "پرستاری تدوین گردیده است و شامل مشخصات کامل سلولی، دوزاژ اورژانس، عوارض جانبی، تداخلات دارویی کشنده، "
+            "نکات کلیدی مراقبت بالینی و پروتکل‌های اختصاصی پادزهر می‌باشد."
+        )
+        lines = wrap_text(intro_desc, FONT_REGULAR, 9.5, PRINTABLE_WIDTH)
         for line in lines:
+            c.setFont(FONT_REGULAR, 9.5)
+            c.setFillColor(colors.HexColor('#333333'))
             c.drawRightString(RIGHT_MARGIN, self.current_y, fa(line))
-            self.current_y -= 17
+            self.current_y -= 16
             
         self.current_y -= 15
         
         for section in sections:
-            if self.current_y < BOTTOM_MARGIN + 65:
+            if self.current_y < BOTTOM_MARGIN + 80:
                 self.start_new_page()
                 
             c.setFillColor(colors.HexColor('#8b1e22'))
-            c.roundRect(LEFT_MARGIN, self.current_y - 25, PRINTABLE_WIDTH, 25, 4, fill=1, stroke=0)
+            c.roundRect(LEFT_MARGIN, self.current_y - 26, PRINTABLE_WIDTH, 26, 4, fill=1, stroke=0)
             c.setFont(FONT_BOLD, 11)
             c.setFillColor(colors.HexColor('#ffffff'))
             c.drawRightString(RIGHT_MARGIN - 10, self.current_y - 18, fa(section['category']))
             self.current_y -= 38
             
             for item in section['items']:
-                content_lines = []
-                content_lines.extend(wrap_text(f"مکانیسم: {item['mechanism']}", FONT_REGULAR, 8.5, PRINTABLE_WIDTH - 20))
-                content_lines.extend(wrap_text(f"اندیکاسیون: {item['indication']}", FONT_REGULAR, 8.5, PRINTABLE_WIDTH - 20))
-                content_lines.extend(wrap_text(f"سمیت و هشدار: {item['toxicity']}", FONT_REGULAR, 8.5, PRINTABLE_WIDTH - 20))
-                content_lines.extend(wrap_text(f"پادزهر و تدابیر: {item['antidote']}", FONT_REGULAR, 8.5, PRINTABLE_WIDTH - 20))
-                
-                card_h = 32 + len(content_lines) * 14.5 + 14
-                
-                if self.current_y - card_h < BOTTOM_MARGIN + 20:
+                if self.current_y < BOTTOM_MARGIN + 85:
                     self.start_new_page()
                     
-                c.setFillColor(colors.HexColor('#faf9f6'))
-                c.setStrokeColor(colors.HexColor('#d9d2c5'))
-                c.roundRect(LEFT_MARGIN, self.current_y - card_h, PRINTABLE_WIDTH, card_h, 5, fill=1, stroke=1)
+                c.setFillColor(colors.HexColor('#f0f4f8'))
+                c.setStrokeColor(colors.HexColor('#1b3b5a'))
+                c.roundRect(LEFT_MARGIN, self.current_y - 24, PRINTABLE_WIDTH, 24, 4, fill=1, stroke=1)
                 
                 c.setFont(FONT_BOLD, 10.5)
                 c.setFillColor(colors.HexColor('#1b3b5a'))
                 c.drawRightString(RIGHT_MARGIN - 10, self.current_y - 16, fa(item['drug']))
                 
-                c.setFont(FONT_REGULAR, 8.5)
-                c.setFillColor(colors.HexColor('#666666'))
-                c.drawString(LEFT_MARGIN + 10, self.current_y - 16, fa(f"دسته: {item['class']}"))
+                if 'class' in item:
+                    c.setFont(FONT_REGULAR, 8.5)
+                    c.setFillColor(colors.HexColor('#4a5568'))
+                    c.drawString(LEFT_MARGIN + 10, self.current_y - 16, fa(f"دسته: {item['class']}"))
                 
-                c.setStrokeColor(colors.HexColor('#e5dfd5'))
-                c.line(LEFT_MARGIN + 8, self.current_y - 22, RIGHT_MARGIN - 8, self.current_y - 22)
+                self.current_y -= 32
                 
-                y_text = self.current_y - 35
-                pairs = [
-                    ("مکانیسم اثر:", item['mechanism'], '#222222'),
-                    ("کاربرد بالینی:", item['indication'], '#1f5f3a'),
-                    ("سمیت و هشدار:", item['toxicity'], '#8b1e22'),
-                    ("پادزهر و منع مصرف:", item['antidote'], '#803c00')
+                fields = [
+                    ("مکانیسم اثر سلولی:", item.get('mechanism'), '#1f1f1f'),
+                    ("کاربرد و اندیکاسیون بالینی:", item.get('indication'), '#1f5f3a'),
+                    ("فارماکوکینتیک و دوزاژ:", item.get('kinetics') or item.get('regimen'), '#2b4c7e'),
+                    ("سمیت، عوارض و علائم مسمومیت:", item.get('toxicity'), '#9c1c1c'),
+                    ("نکات مراقبت پرستاری و مامایی:", item.get('nursing_alerts'), '#52380a'),
+                    ("پادزهر و پروتکل نجات:", item.get('antidote') or item.get('clinical_outcomes'), '#803c00')
                 ]
                 
-                for label, txt, col in pairs:
-                    full_str = f"{label} {txt}"
-                    lines = wrap_text(full_str, FONT_REGULAR, 8.5, PRINTABLE_WIDTH - 20)
-                    for l in lines:
+                for label, txt, text_col in fields:
+                    if not txt:
+                        continue
+                    full_str = f"■ {label} {txt}"
+                    lines = wrap_text(full_str, FONT_REGULAR, 8.5, PRINTABLE_WIDTH - 16)
+                    for line in lines:
+                        if self.current_y < BOTTOM_MARGIN + 35:
+                            self.start_new_page()
                         c.setFont(FONT_REGULAR, 8.5)
-                        c.setFillColor(colors.HexColor(col))
-                        c.drawRightString(RIGHT_MARGIN - 10, y_text, fa(l))
-                        y_text -= 14.5
-                        
-                self.current_y -= (card_h + 10)
+                        c.setFillColor(colors.HexColor(text_col))
+                        c.drawRightString(RIGHT_MARGIN - 8, self.current_y, fa(line))
+                        self.current_y -= 14.5
+                    self.current_y -= 2
+                self.current_y -= 10
 
     def save(self):
         if not self._current_is_cover:
@@ -392,8 +496,12 @@ def build_epic_novel():
     b1 = EpicNovelPDFBuilder('/tmp/epic_pass1.pdf')
     b1.draw_cover()
     b1.draw_toc(all_story_items + [{'title': 'دانشنامه جامع فارماکوپیای ویرانشهر', 'subtitle': 'جدول تفصیلی تمام داروها و پادزهرها'}])
-    for ch in all_story_items:
+    for idx, ch in enumerate(all_story_items):
         b1.add_chapter(ch)
+        if idx < len(BIOCHEMICAL_MECHANISMS):
+            b1.add_biochemical_mechanism(BIOCHEMICAL_MECHANISMS[idx])
+        if idx < len(CLINICAL_CASES):
+            b1.add_clinical_case(CLINICAL_CASES[idx])
     b1.add_pharmacopeia(PHARMACOPEIA_CODEX)
     page_map = b1.save()
     print("Recorded page mapping:", page_map)
@@ -403,8 +511,12 @@ def build_epic_novel():
     b2 = EpicNovelPDFBuilder(output_pdf, chapter_page_map=page_map)
     b2.draw_cover()
     b2.draw_toc(all_story_items + [{'title': 'دانشنامه جامع فارماکوپیای ویرانشهر', 'subtitle': 'جدول تفصیلی تمام داروها و پادزهرها'}])
-    for ch in all_story_items:
+    for idx, ch in enumerate(all_story_items):
         b2.add_chapter(ch)
+        if idx < len(BIOCHEMICAL_MECHANISMS):
+            b2.add_biochemical_mechanism(BIOCHEMICAL_MECHANISMS[idx])
+        if idx < len(CLINICAL_CASES):
+            b2.add_clinical_case(CLINICAL_CASES[idx])
     b2.add_pharmacopeia(PHARMACOPEIA_CODEX)
     b2.save()
     
