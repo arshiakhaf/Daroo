@@ -1,0 +1,6 @@
+py_modules/
+*.pyc
+__pycache__/
+test_page_calc.py
+test_bench.pdf
+/tmp/epic_pass1.pdf
