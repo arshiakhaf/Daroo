@@ -4,3 +4,9 @@ __pycache__/
 test_page_calc.py
 test_bench.pdf
 /tmp/epic_pass1.pdf
+google_drive/
+clean_asterisks.py
+export_markdown.py
+fix_pdf_layouts.py
+sanitize_data.py
+page_*.png
